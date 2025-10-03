@@ -189,6 +189,8 @@ npm run dev
 2. 如需要连接远程MongoDB，请修改 `dataBase/db.js` 中的连接字符串
 3. 生产环境中请配置适当的安全措施，如添加请求验证、授权等
 
+hello world
+
 ## License
 
 [MIT](https://opensource.org/licenses/MIT)
