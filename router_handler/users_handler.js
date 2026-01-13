@@ -1,5 +1,7 @@
 import { User } from '../db_models/User.js'
-
+import bcrypt from 'bcrypt'
+import jwtConfig from '../JWT/config.js'
+import jwt from 'jsonwebtoken'
 //创建新用户函数模块
 export async function registerUser(req,res){
 
@@ -159,4 +161,58 @@ try {
     message:'服务器错误'
   })
 };
+}
+
+
+//用户登录接口
+//登录的逻辑是: SQL语句是否执行成功 -> 用户名是否存在 -> 密码是否正确 -> 
+// 处理token中的信息对象,去除密码和头像图片，并生成密钥 -> 生成token -> 响应客户端
+export const loginUser = async  (req,res)=>{
+ 
+//接受表单数据
+const {username,password} = req.body
+//根据用户名查找用户
+const user = await User.findOne({username})
+
+try {
+  if (!user) {
+  return res.status(400).json({
+    message:"登录失败"
+  })
+  }
+  //第一个参数为用户提交的密码，第二个参数为数据库中的密码
+const compareResults = bcrypt.compareSync(password,user.password)
+  
+if(!compareResults){
+return res.status(400).json({
+  message:"登录失败,密码不正确"
+})
+}
+//生成JWT字符串(身份验证成功)
+//payload用来存放你要传输的数据,因为未加密，不可在载荷中放置敏感信息
+ const payload = { 
+   user:{ 
+     id:user.id
+   }
+ }
+
+ //
+ jwt.sign(
+   payload, 
+   jwtConfig.SECRET_KEY,
+   { expiresIn: jwtConfig.TOKEN_EXPIRES_IN },
+   (err,token)=>{
+    if (err) throw err 
+    //返回令牌
+    res.json({token})
+   }
+ )
+
+} catch (error) {
+res.status(500).json({
+  message:"服务器内部错误"
+})
+}
+
+
 }

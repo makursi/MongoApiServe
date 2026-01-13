@@ -1,4 +1,4 @@
-import { type } from 'os';
+
 import mongoose from '../dataBase/db.js'
 import bcrypt from 'bcrypt'
 const Schema = mongoose.Schema
@@ -26,6 +26,12 @@ phone:{
    type:Number,
   required: true,
   unique: true
+},
+password:{
+  type: String,
+  required: true,
+  minlength: 6,
+  maxlength: 128
 }
 })
 const saltRounds = 10;
