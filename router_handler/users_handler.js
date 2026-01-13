@@ -1,11 +1,11 @@
-import { User } from '../db_models/User.js'
+import User from '../db_models/user.js'
 import bcrypt from 'bcrypt'
 import jwtConfig from '../JWT/config.js'
 import jwt from 'jsonwebtoken'
 //创建新用户函数模块
 export async function registerUser(req,res){
 
-  const {username , email , password , phone , name} = req.body
+  const {email , password , name} = req.body
   try {
     //1.检查用户是否存在
     const existingUser = await User.findOne({username});
