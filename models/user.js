@@ -25,16 +25,21 @@ password:{
 })
 
 //对用户模型密码加密
-
       userSchema.pre('save',async (next)=>{
            if(!this.isModified('password')){
- return next()
+                  next()
            }
           const saltRound = 10
          const hashedPassword = await bcrypt.hash(this.password,saltRound)
          this.password = hashedPassword
          next()
       })
+
+//用户密码对比,为userSchema.methods 自定义实例方法
+userSchema.methods.matchPassword = async function(enteredPassword){
+   return await bcrypt.compare(enteredPassword,this.password)
+}
+
 
 //利用用户校验规则，创建用户模型
 const User = mongoose.model('User',userSchema)

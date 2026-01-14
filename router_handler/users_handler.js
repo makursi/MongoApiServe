@@ -1,7 +1,5 @@
 import User from '../models/user.js'
-import bcrypt from 'bcrypt'
-
-import jwtConfig from '../JWT/config.js'
+import jwtConfig from '../jwt/config.js'
 import jwt from 'jsonwebtoken'
 
 //创建新用户函数模块
@@ -169,24 +167,34 @@ try {
 //登录的逻辑是: SQL语句是否执行成功 -> 用户名是否存在 -> 密码是否正确 -> 
 // 处理token中的信息对象,去除密码和头像图片，并生成密钥 -> 生成token -> 响应客户端
 export const loginUser = async  (req,res)=>{
+  
 //接受表单数据
-const {name,password} = req.body
-//根据用户名查找用户
-const user = await User.findOne({name})
+const {email,password} = req.body
+
+if(!email || !password){
+   res.status(400).json({
+      isLogged:false,
+       message:'Please provide email and password'
+   })
+}
+//根据邮箱查找用户
+const user = await User.findOne({email}).select('+password')
 
 try {
   if (!user) {
   return res.status(400).json({
-    message:"登录失败"
+    isLogged:'false',
+    message:"email or password invaild"
   })
   }
-  //第一个参数为用户提交的密码，第二个参数为数据库中的密码
-const compareResults = bcrypt.compareSync(password,user.password)
-  
-if(!compareResults){
-return res.status(400).json({
-  message:"登录失败,密码不正确"
-})
+
+const isMatch = await user.matchPassword(password)
+
+if(!isMatch){
+  return res.status(400).json({
+     isLogged:false,
+     message:'email or password invalid'
+  })
 }
 //生成JWT字符串(身份验证成功)
 //payload用来存放你要传输的数据,因为未加密，不可在载荷中放置敏感信息
@@ -204,7 +212,12 @@ return res.status(400).json({
    (err,token)=>{
     if (err) throw err 
     //返回令牌
-    res.json({token:token})
+    res.json({
+       user:{name:user.name,email:user.email},
+       isLogged:true,
+       message:'user logged',
+       token:token
+    })
    }
  )
 } catch (error) {
@@ -212,4 +225,9 @@ res.status(500).json({
   message:"serve problem"
 })
 }
+}
+
+
+export const logoutUser = async (req,res)=>{
+   
 }
