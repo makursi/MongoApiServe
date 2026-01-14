@@ -2,8 +2,6 @@
 import mongoose from 'mongoose';
 const Schema = mongoose.Schema
 import bcrypt from 'bcrypt'
-import { match } from 'assert';
-import { hash } from 'crypto';
 const userSchema = new Schema({
 name:{
   type:String,
