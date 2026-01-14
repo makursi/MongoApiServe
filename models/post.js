@@ -1,18 +1,16 @@
-import { connect } from "http2";
+
 import mongoose from "mongoose";
-import { type } from "os";
-import { m } from "vue-router/dist/router-CWoNjPRp.mjs";
 
 const postsSchema = new mongoose.Schema({
     title: {
       type:String,
-       require:true,
+       required:true,
        trim:true,
        maxlength:255
     },
     post_content:{
        type:String,
-       require:true
+       required:true
     },
     image: {
        type:String,
@@ -25,12 +23,16 @@ const postsSchema = new mongoose.Schema({
     },
      user:{
        type:mongoose.Schema.ObjectId,
+      //  表示这个字段存储的是另一个文档的 _id（MongoDB 的主键，类型是 ObjectId）
        ref:'User',
+      //  告诉 Mongoose：这个 ObjectId 指向的是 User 模型 的文档
        required:true
+
      }
 })
 
 postsSchema.index({slug:1})
+//1,表示升序
 postsSchema.index({createdAt:-1})
 
 const Post = mongoose.model('Post',postsSchema)

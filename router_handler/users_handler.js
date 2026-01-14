@@ -1,25 +1,25 @@
-import User from '../db_models/user.js'
+import User from '../models/user.js'
 import bcrypt from 'bcrypt'
+
 import jwtConfig from '../JWT/config.js'
 import jwt from 'jsonwebtoken'
+
 //创建新用户函数模块
 export async function registerUser(req,res){
-
   const {email , password , name} = req.body
   try {
     //1.检查用户是否存在
-    const existingUser = await User.findOne({username});
+    const existingUser = await User.findOne({name});
     if(existingUser){
-       return res.status(400).json({message:'该用户已被注册'})
+       return res.status(400).json({message:'The user has been registerd!'})
     }
     //2.在使用bcrypt库对password进行hash加密后
+    
     //实例化Mongoose Model
 
     const newUser = new User({
-      username,
       password:password,
       email,
-      phone,
       name,
     })
     //保存文档
@@ -27,11 +27,12 @@ export async function registerUser(req,res){
 
     //响应成功返回
     res.status(201).json({
-      message:'用户注册成功',
+      message:'user created !',
       user:{
-         id:savedUser._id,
-        username:savedUser.username ,
-        email:savedUser.email
+        id:savedUser._id,
+        email:savedUser.email,
+        password:savedUser.password,
+        name:savedUser.name
       }
     })
   } catch (error) {
@@ -140,7 +141,7 @@ try {
 
 //删除用户信息,注销用户
 
-export async function deleteUserById (req,res){
+export async function dropUserById (req,res){
 
   const userId = req.params.id;
 
@@ -168,11 +169,10 @@ try {
 //登录的逻辑是: SQL语句是否执行成功 -> 用户名是否存在 -> 密码是否正确 -> 
 // 处理token中的信息对象,去除密码和头像图片，并生成密钥 -> 生成token -> 响应客户端
 export const loginUser = async  (req,res)=>{
- 
 //接受表单数据
-const {username,password} = req.body
+const {name,password} = req.body
 //根据用户名查找用户
-const user = await User.findOne({username})
+const user = await User.findOne({name})
 
 try {
   if (!user) {
@@ -204,15 +204,12 @@ return res.status(400).json({
    (err,token)=>{
     if (err) throw err 
     //返回令牌
-    res.json({token})
+    res.json({token:token})
    }
  )
-
 } catch (error) {
 res.status(500).json({
-  message:"服务器内部错误"
+  message:"serve problem"
 })
 }
-
-
 }

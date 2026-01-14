@@ -13,7 +13,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 import userRouter from './routes/users.js'
 
 // 挂载路由到应用实例上
-app.use('/api/users', userRouter)
+app.use('/api/user', userRouter)
 
 // 启动服务器
 app.listen(port, () => {

@@ -1,5 +1,5 @@
 import express from 'express'
-import { getUserById, getUsers, updateUserById, deleteUserById, registerUser, loginUser } from '../router_handler/users_handler.js'
+import { getUserById, getUsers, updateUserById, dropUserById, registerUser, loginUser } from '../router_handler/users_handler.js'
 // 构建路由对象
 const router = express.Router()
 
@@ -14,7 +14,7 @@ router.get('/getUsers',getUsers)
 //3.更新用户操作-修改用户资料
 router.patch('/updateUserById/:id', updateUserById)
 //4.删除用户操作-注销账户
-router.delete('/deleteUserById/:id', deleteUserById)
+router.delete('/deleteUserById/:id', dropUserById)
 
 //5.用户登录操作-登录用户
 router.post('/loginUser',loginUser)
