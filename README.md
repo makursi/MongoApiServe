@@ -1,6 +1,6 @@
 # User Center API Server
 
-一个基于Node.js、Express和MongoDB的用户中心API服务。
+一个基于Node.js、Express和MongoDB的博客api后端服务
 
 ## 项目简介
 
