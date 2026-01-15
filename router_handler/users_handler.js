@@ -1,7 +1,6 @@
 import User from '../models/user.js'
 import jwtConfig from '../jwt/config.js'
 import jwt from 'jsonwebtoken'
-
 //创建新用户函数模块
 export async function registerUser(req,res){
   const {email , password , name} = req.body
@@ -229,5 +228,19 @@ res.status(500).json({
 
 
 export const logoutUser = async (req,res)=>{
-   
+        res.json({
+           message:'user logged out!'
+        })
+}
+
+export const loggedin = async (req,res)=> {
+   res.json({
+    success:true
+   })
+}
+
+export const loginInUser = async (req,res)=>{
+  res.json({
+     success:'true'
+  })
 }

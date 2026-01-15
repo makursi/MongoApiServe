@@ -1,5 +1,6 @@
 import express from 'express'
-import { getUserById, getUsers, updateUserById, dropUserById, registerUser, loginUser } from '../router_handler/users_handler.js'
+import protect from '../utils/auth.js'
+import { getUserById, getUsers, updateUserById, dropUserById, registerUser, loginUser , logoutUser,loggedin,loginInUser} from '../router_handler/users_handler.js'
 // 构建路由对象
 const router = express.Router()
 
@@ -20,6 +21,12 @@ router.patch('/updateUserById/:id', updateUserById)
 //4.删除用户操作-注销账户
 router.delete('/dropUserById/:id', dropUserById)
 
+router.post('/logout',protect,logoutUser)
 // 导出路由对象
+
+router.get('/check/user/loggedin',protect,loggedin)
+
+router.post('/user-logged-in',protect,loginInUser)
 export default router
+
 
