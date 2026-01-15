@@ -23,6 +23,7 @@ const postsSchema = new mongoose.Schema({
     },
      user:{
        type:mongoose.Schema.ObjectId,
+       //作者
       //  表示这个字段存储的是另一个文档的 _id（MongoDB 的主键，类型是 ObjectId）
        ref:'User',
       //  告诉 Mongoose：这个 ObjectId 指向的是 User 模型 的文档
