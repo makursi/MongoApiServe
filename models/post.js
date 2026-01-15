@@ -18,7 +18,7 @@ const postsSchema = new mongoose.Schema({
     },
     slug:{
        type:String,
-       unique:true,
+      //  unique:true,
        required:true
     },
      user:{

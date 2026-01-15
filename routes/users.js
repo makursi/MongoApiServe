@@ -15,7 +15,7 @@ router.post('/login', loginUser)
 //2.查询用户操作-查询用户
 router.get('/getUserById/:id',getUserById)
 
-router.get('/getUsers',getUsers)
+router.get('/',getUsers)
 //3.更新用户操作-修改用户资料
 router.patch('/updateUserById/:id', updateUserById)
 //4.删除用户操作-注销账户

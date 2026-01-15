@@ -1,5 +1,4 @@
 import express from 'express'
-import bodyParser from 'body-parser'
 import connectDB from './config/db.config.js'
 import dotenv from 'dotenv'
 import cors from 'cors'
@@ -23,7 +22,6 @@ app.use(cors())
 // 解析请求体中的json数据的中间件
 app.use(express.json())
 
-app.use(bodyParser.urlencoded({ extended: true }));
 // 导入路由模块
 
 
