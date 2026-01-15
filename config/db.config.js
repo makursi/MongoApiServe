@@ -5,8 +5,6 @@ import dotenv from "dotenv"
 dotenv.config();
 
 const connectDB = async ()=>{
-   
- 
 try {
   const conn = await mongoose.connect(process.env.DATABASE_BASE_URL)
 
@@ -18,7 +16,4 @@ try {
   process.exit(1)
 }
 }
-
-connectDB()
-
 export default connectDB

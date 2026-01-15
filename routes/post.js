@@ -1,5 +1,5 @@
 import express from 'express'
-import { createNewPost, getClientPosts, getCountPosts, getPosts, getSinglePost } from '../router_handler/posts_handler' 
+import { createNewPost, deletePost, getClientPosts, getCountPosts, getPosts, getSinglePost, updatePost, uploadPostImg } from '../router_handler/posts_handler' 
 import fs from 'fs'
 import path from 'path'
 import multer from 'multer'
@@ -33,5 +33,11 @@ router.get('/client/post',getClientPosts)
 
 router.post('/',protect,createNewPost)
 
+router.put('/:id',protect,updatePost)
 
+router.delete('/:id',protect,deletePost)
+
+router.post('/upload-image',protect,upload.single('image'),uploadPostImg)
 const upload = multer({ storage });
+
+export default router
