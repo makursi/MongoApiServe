@@ -1,6 +1,6 @@
 import fs from 'fs'
 import path from 'path'
-import Post from '../models/post'
+import Post from '../models/post.js'
 // get all posts
 // GET /api/posts
 export async function getPosts(req,res){
