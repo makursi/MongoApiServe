@@ -2,8 +2,6 @@
 
 一个基于Node.js、Express和MongoDB的全功能博客API后端服务，支持用户认证、文章管理、文件上传等功能。
 
-
-![Alt text](./public/images/Carla.webp)
 ## 项目简介
 
 本项目是一个完整的博客API后端服务，提供用户认证、文章管理、文件上传等核心功能。项目采用现代Web开发技术栈，具有良好的安全性、可扩展性和可维护性。
@@ -74,8 +72,8 @@
 ```env
 PORT=3000
 DATABASE_BASE_URL=mongodb://localhost:27017/blog_api
-JWT_SECRET=your_jwt_secret_key_here
-JWT_EXPIRE=7d
+SECRET_KEY=your_jwt_secret_key_here
+TOKEN_EXPIRES_IN=7d
 NODE_ENV=development
 ```
 
@@ -141,18 +139,19 @@ npm start
   - 成功 (201):
     ```json
     {
-      "message": "注册成功",
+      "message": "user created !",
       "user": {
-        "_id": "用户ID",
-        "name": "用户名",
-        "email": "user@example.com"
+        "id": "用户ID",
+        "email": "user@example.com",
+        "password": "用户密码哈希值",
+        "name": "用户名"
       }
     }
     ```
   - 失败 (400):
     ```json
     {
-      "error": "错误信息"
+      "message": "The user has been registerd!"
     }
     ```
 
@@ -172,13 +171,20 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "登录成功",
-      "token": "JWT令牌",
       "user": {
-        "_id": "用户ID",
         "name": "用户名",
         "email": "user@example.com"
-      }
+      },
+      "isLogged": true,
+      "message": "user logged",
+      "token": "JWT令牌"
+    }
+    ```
+  - 失败 (400):
+    ```json
+    {
+      "isLogged": false,
+      "message": "email or password invalid"
     }
     ```
 
@@ -192,19 +198,29 @@ npm start
   - 成功 (200):
     ```json
     {
-      "user": {
-        "_id": "用户ID",
-        "name": "用户名",
-        "email": "user@example.com"
-      }
+      "_id": "用户ID",
+      "name": "用户名",
+      "email": "user@example.com",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间"
+    }
+    ```
+  - 失败 (404):
+    ```json
+    {
+      "messag": "用户未找到"
     }
     ```
 
-#### 4. 获取所有用户
+#### 4. 获取所有用户（支持分页和筛选）
 
 - **URL**: `/api/`
 - **方法**: `GET`
 - **认证**: 不需要
+- **查询参数**:
+  - `page`: 页码（默认为1）
+  - `limit`: 每页数量（默认为10）
+  - `role`: 角色筛选（可选）
 - **响应示例**:
   - 成功 (200):
     ```json
@@ -213,9 +229,13 @@ npm start
         {
           "_id": "用户ID",
           "name": "用户名",
-          "email": "user@example.com"
+          "email": "user@example.com",
+          "createdAt": "创建时间"
         }
-      ]
+      ],
+      "currentPage": 1,
+      "totalPages": 1,
+      "totalUsers": 1
     }
     ```
 
@@ -236,12 +256,19 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "用户信息更新成功",
+      "message": "用户资料更新成功",
       "user": {
         "_id": "用户ID",
         "name": "新用户名",
-        "email": "newemail@example.com"
+        "email": "newemail@example.com",
+        "updatedAt": "更新时间"
       }
+    }
+    ```
+  - 失败 (404):
+    ```json
+    {
+      "message": "用户未找到，更新失败"
     }
     ```
 
@@ -255,7 +282,14 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "用户删除成功"
+      "message": "用户账户删除成功",
+      "id": "用户ID"
+    }
+    ```
+  - 失败 (404):
+    ```json
+    {
+      "message": "用户未找到,无法删除"
     }
     ```
 
@@ -268,12 +302,7 @@ npm start
   - 成功 (200):
     ```json
     {
-      "isLoggedIn": true,
-      "user": {
-        "_id": "用户ID",
-        "name": "用户名",
-        "email": "user@example.com"
-      }
+      "success": true
     }
     ```
 
@@ -286,7 +315,7 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "登出成功"
+      "message": "user logged out!"
     }
     ```
 
@@ -301,19 +330,17 @@ npm start
   - 成功 (200):
     ```json
     {
-      "posts": [
+      "data": [
         {
           "_id": "文章ID",
           "title": "文章标题",
           "post_content": "文章内容",
           "slug": "文章slug",
           "user": "作者ID",
-          "createdAt": "创建时间"
+          "createdAt": "创建时间",
+          "updatedAt": "更新时间"
         }
-      ],
-      "total": 10,
-      "page": 1,
-      "limit": 10
+      ]
     }
     ```
 
@@ -327,14 +354,19 @@ npm start
   - 成功 (200):
     ```json
     {
-      "post": {
-        "_id": "文章ID",
-        "title": "文章标题",
-        "post_content": "文章内容",
-        "slug": "文章slug",
-        "user": "作者ID",
-        "createdAt": "创建时间"
-      }
+      "_id": "文章ID",
+      "title": "文章标题",
+      "post_content": "文章内容",
+      "slug": "文章slug",
+      "user": "作者ID",
+      "createdAt": "创建时间",
+      "updatedAt": "更新时间"
+    }
+    ```
+  - 失败 (404):
+    ```json
+    {
+      "message": "Post not found"
     }
     ```
 
@@ -347,7 +379,7 @@ npm start
   - 成功 (200):
     ```json
     {
-      "count": 10
+      "data": 10
     }
     ```
 
@@ -359,9 +391,17 @@ npm start
 - **响应示例**:
   - 成功 (200):
     ```json
-    {
-      "posts": [...]
-    }
+    [
+      {
+        "_id": "文章ID",
+        "title": "文章标题",
+        "post_content": "文章内容",
+        "slug": "文章slug",
+        "user": "作者ID",
+        "createdAt": "创建时间",
+        "updatedAt": "更新时间"
+      }
+    ]
     ```
 
 #### 5. 创建新文章
@@ -381,14 +421,13 @@ npm start
   - 成功 (201):
     ```json
     {
-      "message": "文章创建成功",
-      "post": {
-        "_id": "文章ID",
-        "title": "文章标题",
-        "post_content": "文章内容",
-        "slug": "文章slug",
-        "user": "作者ID"
-      }
+      "message": "Post created !"
+    }
+    ```
+  - 失败 (400):
+    ```json
+    {
+      "message": "Slug already exists"
     }
     ```
 
@@ -409,14 +448,13 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "文章更新成功",
-      "post": {
-        "_id": "文章ID",
-        "title": "新标题",
-        "post_content": "新内容",
-        "slug": "文章slug",
-        "user": "作者ID"
-      }
+      "message": "post updated!"
+    }
+    ```
+  - 失败 (403):
+    ```json
+    {
+      "message": "Not authrorized"
     }
     ```
 
@@ -430,7 +468,13 @@ npm start
   - 成功 (200):
     ```json
     {
-      "message": "文章删除成功"
+      "message": "Post deleted !"
+    }
+    ```
+  - 失败 (404):
+    ```json
+    {
+      "message": "Post not found"
     }
     ```
 
@@ -439,23 +483,31 @@ npm start
 - **URL**: `/api/posts/upload-image`
 - **方法**: `POST`
 - **认证**: 需要JWT
-- **表单数据**: `image` - 图片文件
+- **表单数据**: 
+  - `image`: 图片文件
+  - `postId`: 文章ID
 - **响应示例**:
   - 成功 (200):
     ```json
     {
-      "message": "图片上传成功",
-      "imageUrl": "/uploads/filename.jpg"
+      "message": "Post image uploaded !"
+    }
+    ```
+  - 失败 (400):
+    ```json
+    {
+      "message": "postId is required"
     }
     ```
 
 ## 安全特性
 
-1. **密码安全**: 使用bcrypt进行密码哈希加密
-2. **身份验证**: 使用JWT进行用户身份验证
-3. **访问控制**: 通过中间件限制受保护路由的访问
-4. **输入验证**: 对用户输入进行基本验证
+1. **密码安全**: 使用bcrypt进行密码哈希加密，最小长度6字符，最大长度255字符
+2. **身份验证**: 使用JWT进行用户身份验证，令牌有过期时间
+3. **访问控制**: 通过中间件限制受保护路由的访问，验证用户权限
+4. **输入验证**: 对用户输入进行基本验证（邮箱格式、用户名长度等）
 5. **错误处理**: 统一的错误处理机制
+6. **密码保护**: 数据库查询时自动排除密码字段
 
 ## 开发指南
 
@@ -483,6 +535,12 @@ curl -X POST http://localhost:3000/api/register \
 curl -X POST http://localhost:3000/api/login \
   -H "Content-Type: application/json" \
   -d '{"email":"test@example.com","password":"123456"}'
+
+# 创建文章（需要JWT token）
+curl -X POST http://localhost:3000/api/posts \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  -d '{"title":"文章标题","post_content":"文章内容","slug":"article-slug"}'
 ```
 
 ## 部署
@@ -529,99 +587,3 @@ CMD ["npm", "start"]
 ## 联系方式
 
 如有任何问题或建议，请联系项目维护者。
-    ```json
-    { "message": "用户名已存在" }
-    ```
-
-#### 2. 查询用户信息
-
-- **URL**: `/api/:id`
-- **方法**: `GET`
-- **路径参数**:
-  - `id`: 用户ID
-- **响应示例**:
-  - 成功 (200):
-    ```json
-    {
-      "message": "查询成功",
-      "user": {
-        "id": 1,
-        "name": "用户名",
-        "username": "user123",
-        "email": "user@example.com",
-        "phone": 13800138000
-      }
-    }
-    ```
-  - 失败 (404):
-    ```json
-    { "message": "用户不存在" }
-    ```
-
-#### 3. 更新用户资料
-
-- **URL**: `/api/:id`
-- **方法**: `PUT`
-- **路径参数**:
-  - `id`: 用户ID
-- **请求体参数** (可选字段):
-  ```json
-  {
-    "name": "新用户名",
-    "email": "newemail@example.com",
-    "phone": 13900139000
-  }
-  ```
-- **响应示例**:
-  - 成功 (200):
-    ```json
-    {
-      "message": "更新成功",
-      "user": { "更新后的用户信息" }
-    }
-    ```
-  - 失败 (404):
-    ```json
-    { "message": "用户不存在" }
-    ```
-
-#### 4. 删除用户账户
-
-- **URL**: `/api/:id`
-- **方法**: `DELETE`
-- **路径参数**:
-  - `id`: 用户ID
-- **响应示例**:
-  - 成功 (200):
-    ```json
-    {
-      "message": "账户已成功注销",
-      "user": {
-        "id": 1,
-        "username": "user123"
-      }
-    }
-    ```
-  - 失败 (404):
-    ```json
-    { "message": "用户不存在" }
-    ```
-
-## 错误处理
-
-所有API接口在发生错误时都会返回适当的HTTP状态码和错误信息。常见的错误状态码包括：
-- 400: 请求参数错误
-- 404: 资源不存在
-- 500: 服务器内部错误
-
-## 开发注意事项
-
-1. 请确保在修改代码后进行充分测试
-2. 如需要连接远程MongoDB，请修改 `dataBase/db.js` 中的连接字符串
-3. 生产环境中请配置适当的安全措施，如添加请求验证、授权等
-
-
-
-## License
-
-[MIT](https://opensource.org/licenses/MIT)
