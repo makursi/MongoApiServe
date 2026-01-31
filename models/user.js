@@ -25,9 +25,9 @@ password:{
 })
 
 //对用户模型密码加密
-      userSchema.pre('save',async (next)=>{
+      userSchema.pre('save',async function(next){
            if(!this.isModified('password')){
-                  next()
+             return
            }
           const saltRound = 10
          const hashedPassword = await bcrypt.hash(this.password,saltRound)

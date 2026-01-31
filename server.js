@@ -31,5 +31,7 @@ app.use("/uploads", express.static(path.join(__dirname, "public/upload")));
 const PORT = process.env.PORT;
 // 启动服务器
 app.listen(PORT, () => {
+  console.log("Ciallo～（∠·ω ＜）⌒★ 服务已启动喵~~");
+
   console.log(`server is running at http://localhost:${PORT}`);
 });
