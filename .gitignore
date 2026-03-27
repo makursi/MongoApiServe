@@ -114,3 +114,8 @@ Thumbs.db
 
 # Visual Studio Code
 .vscode
+
+# requirement doc
+requirements-doc*.md
+require*.md
+requires.md
